@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Advanced Password Strength Checker</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #ff5656;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            text-align: center;
+            background-color: rgb(196, 255, 144);
+            border: 2px solid #000000;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 2 12px 14px rgba(0, 0, 0, 0.87);
+        }
+
+        h1 {
+            padding: 20px 20px;
+            background-color: #2746ae;
+            border-radius: 15px;
+            color: #ffffff;
+        }
+
+        label {
+            font-weight: bold;
+            display: block;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        #strength {
+            font-weight: bold;
+            margin-top: 10px;
+            text-align: left;
+        }
+
+        .strength-meter {
+            height: 10px;
+            background-color: #ccc;
+            border-radius: 5px;
+            margin-top: 5px;
+            position: relative;
+            transition: width 0.3s ease-in-out;
+        }
+
+        .strength-meter div {
+            height: 100%;
+            border-radius: 5px;
+        }
+
+        .very-weak {
+            background-color: #e74c3c;
+        }
+
+        .weak {
+            background-color: #f39c12;
+        }
+
+        .strong {
+            background-color: #27ae60;
+        }
+
+        .very-strong {
+            background-color: #2ecc71;
+        }
+
+        .feedback {
+            margin-top: 10px;
+            text-align: left;
+            font-weight: bold;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Advanced Password Strength Checker</h1>
+        <label for="passwordInput">Enter Password: </label>
+        <input type="password" id="passwordInput" onkeyup="checkPasswordStrength(this.value)">
+        <p id="strength">Strength: <div class="strength-meter"><div></div></div></p>
+        <div class="feedback">
+            <p id="lengthFeedback">Minimum 8 characters</p>
+            <p id="lowercaseFeedback">Include at least one lowercase letter</p>
+            <p id="uppercaseFeedback">Include at least one uppercase letter</p>
+            <p id="numberFeedback">Include at least one number</p>
+            <p id="specialCharFeedback">Include at least one special character</p>
+        </div>
+    </div>
+
+    <script>
+        function checkPasswordStrength(password) {
+            const strengthText = document.getElementById('strength');
+            const strengthMeter = document.querySelector('.strength-meter div');
+            const feedback = document.querySelector('.feedback');
+
+            const lengthRegex = /^.{8,}$/;
+            const lowercaseRegex = /[a-z]/;
+            const uppercaseRegex = /[A-Z]/;
+            const numberRegex = /[0-9]/;
+            const specialCharRegex = /[\W_]/;
+
+            const criteria = [
+                { regex: lengthRegex, text: 'Minimum 8 characters' },
+                { regex: lowercaseRegex, text: 'Include at least one lowercase letter' },
+                { regex: uppercaseRegex, text: 'Include at least one uppercase letter' },
+                { regex: numberRegex, text: 'Include at least one number' },
+                { regex: specialCharRegex, text: 'Include at least one special character' },
+            ];
+
+            let score = 0;
+            let feedbackText = '';
+
+            criteria.forEach((criterion) => {
+                if (criterion.regex.test(password)) {
+                    score++;
+                } else {
+                    feedbackText += criterion.text + '<br>';
+                }
+            });
+
+            const strengthClasses = ['very-weak', 'weak', 'strong', 'very-strong'];
+            const strengthLabels = ['Very Weak', 'Weak', 'Strong', 'Very Strong'];
+            
+            const strengthIndex = score > 2 ? (score > 3 ? 3 : 2) : (score > 0 ? 1 : 0);
+
+            strengthMeter.style.width = (score / criteria.length) * 100 + '%';
+            strengthMeter.className = 'strength-meter ' + strengthClasses[strengthIndex];
+            strengthText.innerHTML = 'Strength: ' + strengthLabels[strengthIndex];
+            feedback.innerHTML = feedbackText;
+        }
+    </script>
+</body>
+</html>
